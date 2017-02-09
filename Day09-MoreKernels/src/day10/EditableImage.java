@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package day09;
+package day10;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -21,9 +21,9 @@ import javax.imageio.ImageIO;
  *
  * @author unouser
  */
-public class MyImage extends WritableImage{
+public class EditableImage extends WritableImage{
 
-    public MyImage(int i, int i0) {
+    public EditableImage(int i, int i0) {
         super(i, i0);
     }
     
@@ -42,7 +42,7 @@ public class MyImage extends WritableImage{
         try {
             ImageIO.write(renderedImage, "PNG", new File(System.getProperty("user.home") + "/Desktop/newPhoto.png") );
         } catch (IOException ex) {
-            Logger.getLogger(MyImage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EditableImage.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
@@ -90,6 +90,10 @@ public class MyImage extends WritableImage{
                 sumR /= power;
                 sumG /= power;
                 sumB /= power;
+                
+                sumR = clamp(sumR);
+                sumG = clamp(sumG);
+                sumB = clamp(sumB);
                 
                 newColors[y][x] = new Color(
                         Math.abs(sumR), 
@@ -162,9 +166,9 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void edgeDetector() {
+    public void edgeDetector(int w) {
         
-        int w = 1; ///3x3 kernel
+         w = 1; ///3x3 kernel
         float[][] magicKernel = new float[2*w + 1][2 * w + 1];
         
         for(int y = 0; y < 2 * w + 1 ;  y++)
@@ -188,9 +192,9 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void sharpen() {
+    public void sharpen(int w) {
         
-        int w = 1; ///3x3 kernel
+        w = 1; ///3x3 kernel
         float[][] magicKernel = new float[2*w + 1][2 * w + 1];
         
         for(int y = 0; y < 2 * w + 1 ;  y++)
@@ -216,6 +220,16 @@ public class MyImage extends WritableImage{
 
     private boolean doesPixelExist(int x, int y) {
         return x < this.getWidth() && x >= 0 && y < this.getHeight() && y >= 0;
+    }
+
+    private float clamp(float f) {
+        
+        
+        if(f < 0)
+            return 0;
+        if(f > 1)
+            return 1;
+        return f;
     }
     
     

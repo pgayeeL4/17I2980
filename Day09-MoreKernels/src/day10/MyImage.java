@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package day09;
+package day10;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -91,10 +91,12 @@ public class MyImage extends WritableImage{
                 sumG /= power;
                 sumB /= power;
                 
+                
+                
                 newColors[y][x] = new Color(
-                        Math.abs(sumR), 
-                        Math.abs(sumG), 
-                        Math.abs(sumB), 
+                        clampAbs(sumR), 
+                        clampAbs(sumG), 
+                        clampAbs(sumB), 
                         1.0f );
             }
         }
@@ -162,7 +164,7 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void edgeDetector() {
+    public void edgeDetector(int i) {
         
         int w = 1; ///3x3 kernel
         float[][] magicKernel = new float[2*w + 1][2 * w + 1];
@@ -188,7 +190,7 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void sharpen() {
+    public void sharpen(int i) {
         
         int w = 1; ///3x3 kernel
         float[][] magicKernel = new float[2*w + 1][2 * w + 1];
@@ -218,6 +220,16 @@ public class MyImage extends WritableImage{
         return x < this.getWidth() && x >= 0 && y < this.getHeight() && y >= 0;
     }
     
+    private float clampAbs(float f){
+        float toReturn = Math.abs(f);
+        
+        if(toReturn < 0)
+            return 0;
+        if(toReturn > 1)
+            return 1;
+        
+        return toReturn;
+    }
     
     
 }

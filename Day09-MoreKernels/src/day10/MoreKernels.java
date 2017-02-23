@@ -43,10 +43,6 @@ public class MoreKernels extends Application {
         outputImageJfx.copyFrom(inputImageJfx);
         
         
-        //outputImageJfx.blur(1);
-        //outputImageJfx.save();
-        
-        
         
         launch(args);
     }

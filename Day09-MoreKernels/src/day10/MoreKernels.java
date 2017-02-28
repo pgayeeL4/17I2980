@@ -161,7 +161,7 @@ public class MoreKernels extends Application {
                 outputImageJfx = newImage;
 
 
-                outputImageJfx.reduceColors(4096);
+                //outputImageJfx.reduceColors(4096);
 
                 outputImageView.setImage(outputImageJfx);
                     

@@ -87,11 +87,13 @@ public class MyImage extends WritableImage{
                     }
                 }
                 
-                sumR /= power;
-                sumG /= power;
-                sumB /= power;
+                if(power != 0){
                 
+                    sumR /= power;
+                    sumG /= power;
+                    sumB /= power;
                 
+                }
                 
                 newColors[y][x] = new Color(
                         clampAbs(sumR), 
@@ -178,11 +180,11 @@ public class MyImage extends WritableImage{
             }
         }
         
-        magicKernel[w][w] = 4;
-        magicKernel[w][0] = -1;
-        magicKernel[0][w] = -1;
-        magicKernel[w][2] = -1;
-        magicKernel[2][w] = -1;
+        magicKernel[w][w] = -4;
+        magicKernel[w][0] = 1;
+        magicKernel[0][w] = 1;
+        magicKernel[w][2] = 1;
+        magicKernel[2][w] = 1;
         
         
         

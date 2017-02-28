@@ -231,5 +231,49 @@ public class MyImage extends WritableImage{
         return toReturn;
     }
     
+    /*public void reduceColors(int finalColorCount)
+    {
+        if(finalColorCount <= 0) return; //Doesn't make sense without a positive number
+        
+        List<Color> finalColors = new ArrayList<Color>();
+        
+        for(int i = 0; i < finalColorCount; i++)
+        {
+            double red = 0;
+            double green = 0;
+            double blue = 0;
+            
+            //Now assign values based on some heuristic
+            red = Math.random();
+            green = Math.random();
+            blue = Math.random();
+            
+            Color randomColor = new Color(red,green,blue,1);
+            finalColors.add(randomColor);
+        }
+        
+        for(int y = 0; y < this.getHeight() ;  y++)
+        {
+            for(int x = 0; x < this.getWidth() ; x++)
+            {
+                double closestDistance = Double.MAX_VALUE;
+                Color closestColor = null;
+                Color thisColor = this.getPixelReader().getColor(x, y);
+                
+                for(Color possibleColor : finalColors)
+                {
+                    double currentDistance = colorDistance(thisColor, possibleColor);
+                    
+                    if(currentDistance >= closestDistance) continue;
+                    
+                    closestColor = possibleColor;
+                    closestDistance = currentDistance;
+                }
+                
+                this.getPixelWriter().setColor(x, y, closestColor);
+            }
+        }
+    }*/
+    
     
 }

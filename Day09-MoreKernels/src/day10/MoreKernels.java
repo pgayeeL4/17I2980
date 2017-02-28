@@ -142,6 +142,34 @@ public class MoreKernels extends Application {
             menuPane.getChildren().add(button);
         }
         
+        menuPane.getChildren().add(new Separator());
+        
+        Button reduceButton = new Button("Reduce Colors");
+        reduceButton.setOnAction(new EventHandler<ActionEvent>(){
+
+            @Override
+            public void handle(ActionEvent event) {
+                            
+                MyImage newImage = new MyImage((int)inputImageJfx.getWidth(), (int)inputImageJfx.getHeight());
+
+                newImage.copyFrom(outputImageJfx);
+
+                undoStack.add(outputImageJfx);
+
+                redoStack.clear();
+
+                outputImageJfx = newImage;
+
+
+                outputImageJfx.reduceColors(4096);
+
+                outputImageView.setImage(outputImageJfx);
+                    
+            }
+            
+        
+        });
+        
         
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));

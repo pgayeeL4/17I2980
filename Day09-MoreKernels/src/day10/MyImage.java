@@ -9,6 +9,8 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
@@ -233,7 +235,131 @@ public class MyImage extends WritableImage{
         return toReturn;
     }
     
-    /*public void reduceColors(int finalColorCount)
+    public void reduceColors(int finalColorCount)
+    {
+        if(finalColorCount <= 0) return; //Doesn't make sense without a positive number
+        
+        List<Color> finalColors = new ArrayList<Color>();
+        
+        for(int i = 0; i < finalColorCount; i++)
+        {
+            double red = 0;
+            double green = 0;
+            double blue = 0;
+            
+            //Now assign values based on some heuristic
+            red = Math.random();
+            green = Math.random();
+            blue = Math.random();
+            
+            Color randomColor = new Color(red,green,blue,1);
+            finalColors.add(randomColor);
+        }
+        
+        List<List<Color>> groupVotes = new ArrayList<List<Color>>();
+        
+        for(int i = 0; i < finalColorCount; i++)
+        {
+            groupVotes.add(new ArrayList<Color>());
+        }
+        
+        for(int y = 0; y < this.getHeight() ;  y++)
+        {
+            for(int x = 0; x < this.getWidth() ; x++)
+            {
+                double closestDistance = Double.MAX_VALUE;
+                int closestColorIndex = -1;
+                Color thisColor = this.getPixelReader().getColor(x, y);
+                
+                for(int guess = 0; guess < finalColorCount; guess++)
+                {
+                    Color possibleColor = finalColors.get(guess);
+                    double currentDistance = colorDistance(thisColor, possibleColor);
+                    
+                    if(currentDistance >= closestDistance) continue;
+                    
+                    closestColorIndex= guess;
+                    closestDistance = currentDistance;
+                }
+                
+                groupVotes.get(closestColorIndex).add(thisColor);
+            }
+        }
+        
+        ///Calculate the new median value
+        
+        for(int i = 0; i < finalColorCount; i++)
+        {
+            double sumR = 0;
+            double sumG = 0;
+            double sumB = 0;
+            
+            for(Color color : groupVotes.get(i))
+            {
+                sumR += color.getRed();
+                sumG += color.getGreen();
+                sumB += color.getBlue();
+            }
+            
+            sumR /= groupVotes.get(i).size();
+            sumG /= groupVotes.get(i).size();
+            sumB /= groupVotes.get(i).size();
+            
+            
+            finalColors.set(i, new Color(sumR, sumG, sumB, 1));
+        }
+        
+        
+        
+        
+        for(int y = 0; y < this.getHeight() ;  y++)
+        {
+            for(int x = 0; x < this.getWidth() ; x++)
+            {
+                double closestDistance = Double.MAX_VALUE;
+                Color closestColor = null;
+                Color thisColor = this.getPixelReader().getColor(x, y);
+                
+                for(Color possibleColor : finalColors)
+                {
+                    double currentDistance = colorDistance(thisColor, possibleColor);
+                    
+                    if(currentDistance >= closestDistance) continue;
+                    
+                    closestColor = possibleColor;
+                    closestDistance = currentDistance;
+                }
+                
+                this.getPixelWriter().setColor(x, y, closestColor);
+            }
+        }
+        
+        
+        
+        for(int y = 0; y < this.getHeight() ;  y++)
+        {
+            for(int x = 0; x < this.getWidth() ; x++)
+            {
+                double closestDistance = Double.MAX_VALUE;
+                Color closestColor = null;
+                Color thisColor = this.getPixelReader().getColor(x, y);
+                
+                for(Color possibleColor : finalColors)
+                {
+                    double currentDistance = colorDistance(thisColor, possibleColor);
+                    
+                    if(currentDistance >= closestDistance) continue;
+                    
+                    closestColor = possibleColor;
+                    closestDistance = currentDistance;
+                }
+                
+                this.getPixelWriter().setColor(x, y, closestColor);
+            }
+        }
+    }
+    
+    public void reduceColorsRandom(int finalColorCount)
     {
         if(finalColorCount <= 0) return; //Doesn't make sense without a positive number
         
@@ -275,7 +401,12 @@ public class MyImage extends WritableImage{
                 this.getPixelWriter().setColor(x, y, closestColor);
             }
         }
-    }*/
+    }
+    
+    public double colorDistance(Color one, Color two)
+    {
+        return Math.abs(one.getRed() - two.getRed()) + Math.abs(one.getGreen() - two.getGreen()) + Math.abs(one.getBlue() - two.getBlue());
+    }
     
     
 }

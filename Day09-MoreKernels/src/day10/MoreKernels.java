@@ -32,7 +32,10 @@ public class MoreKernels extends Application {
 
     public static void main(String[] args) throws Exception{
         
-        inputImageJfx = new Image(new FileInputStream(System.getProperty("user.home") + "/Desktop/photo.jpg"));;
+         System.out.println("Working Directory = " +
+              System.getProperty("user.dir"));
+        
+        inputImageJfx = new Image(new FileInputStream("DogSprinkler.jpeg"));
         
         outputImageJfx = new MyImage((int)inputImageJfx.getWidth(), (int)inputImageJfx.getHeight());;
         
@@ -161,7 +164,7 @@ public class MoreKernels extends Application {
                 outputImageJfx = newImage;
 
 
-                //outputImageJfx.reduceColors(4096);
+                outputImageJfx.reduceColors(8);
 
                 outputImageView.setImage(outputImageJfx);
                     
@@ -169,6 +172,8 @@ public class MoreKernels extends Application {
             
         
         });
+        
+        menuPane.getChildren().add(reduceButton);
         
         
         BorderPane root = new BorderPane();

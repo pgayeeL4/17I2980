@@ -29,8 +29,6 @@ public class MoreKernels extends Application {
     static List<MyImage> undoStack = new ArrayList<MyImage>();
     static List<MyImage> redoStack = new ArrayList<MyImage>();
     
-    private ImageView outputImageView;
-    
 
     public static void main(String[] args) throws Exception{
         
@@ -51,40 +49,55 @@ public class MoreKernels extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        outputImageView = new ImageView(outputImageJfx);
+        //ImageView inputImageView = new ImageView(inputImageJfx);
+        ImageView outputImageView = new ImageView(outputImageJfx);
       
         VBox menuPane = new VBox();
         
         Button undoButton = new Button("Undo");
-        undoButton.setOnAction(e->{
+        undoButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
                 
-            if(undoStack.size() <= 0) return;
-
-            MyImage previousImage = undoStack.get(undoStack.size() - 1);
-            undoStack.remove(undoStack.size() - 1);
-
-            redoStack.add(outputImageJfx);
-
-            outputImageJfx = previousImage;
-
-            outputImageView.setImage(outputImageJfx);
-            
+                
+                if(undoStack.size() > 0)
+                {
+                    MyImage previousImage = undoStack.get(undoStack.size() - 1);
+                    undoStack.remove(undoStack.size() - 1);
+                    
+                    redoStack.add(outputImageJfx);
+                    
+                    outputImageJfx = previousImage;
+                            
+                            
+                    outputImageView.setImage(outputImageJfx);
+                    
+                    
+                }
+                
+            }
         });
         menuPane.getChildren().add(undoButton);
         
         Button redoButton = new Button("Redo");
-        redoButton.setOnAction(e->{
-            if(redoStack.size() <= 0) return;
-
-            MyImage previousImage = redoStack.get(redoStack.size() - 1);
-            redoStack.remove(redoStack.size() - 1);
-
-            undoStack.add(outputImageJfx);
-
-            outputImageJfx = previousImage;
-
-
-            outputImageView.setImage(outputImageJfx);
+        redoButton.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(redoStack.size() > 0)
+                {
+                    MyImage previousImage = redoStack.get(redoStack.size() - 1);
+                    redoStack.remove(redoStack.size() - 1);
+                    
+                    undoStack.add(outputImageJfx);
+                    
+                    outputImageJfx = previousImage;
+                            
+                            
+                    outputImageView.setImage(outputImageJfx);
+                    
+                    
+                }
+            }
         });
         menuPane.getChildren().add(redoButton);
         
@@ -99,7 +112,10 @@ public class MoreKernels extends Application {
             
             
             Button button = new Button(method.getName());
-            button.setOnAction(e->{
+            button.setOnAction(
+                    new EventHandler<ActionEvent>(){
+                    @Override
+                    public void handle(ActionEvent event) {
                         try {  
                             
                             MyImage newImage = new MyImage((int)inputImageJfx.getWidth(), (int)inputImageJfx.getHeight());
@@ -122,7 +138,7 @@ public class MoreKernels extends Application {
                         }
                     }
 
-                
+                }
             );
             
             
@@ -132,11 +148,31 @@ public class MoreKernels extends Application {
         menuPane.getChildren().add(new Separator());
         
         Button reduceButton = new Button("Reduce Colors");
-        reduceButton.setOnAction(e->undoable(()->outputImageJfx.reduceColors(32)));        
-        menuPane.getChildren().add(reduceButton);
+        reduceButton.setOnAction(new EventHandler<ActionEvent>(){
+
+            @Override
+            public void handle(ActionEvent event) {
+                            
+                MyImage newImage = new MyImage((int)inputImageJfx.getWidth(), (int)inputImageJfx.getHeight());
+
+                newImage.copyFrom(outputImageJfx);
+
+                undoStack.add(outputImageJfx);
+
+                redoStack.clear();
+
+                outputImageJfx = newImage;
+
+
+                outputImageJfx.reduceColors(8);
+
+                outputImageView.setImage(outputImageJfx);
+                    
+            }
+            
         
-        reduceButton = new Button("Reduce Colors Random");
-        reduceButton.setOnAction(e->undoable(()->outputImageJfx.reduceColorsRandom(32)));        
+        });
+        
         menuPane.getChildren().add(reduceButton);
         
         
@@ -153,21 +189,5 @@ public class MoreKernels extends Application {
         primaryStage.setTitle("Duplicates");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-    
-    private void undoable (Runnable toRun)
-    {
-        MyImage newImage = new MyImage((int)inputImageJfx.getWidth(), (int)inputImageJfx.getHeight());
-
-        newImage.copyFrom(outputImageJfx);
-
-        undoStack.add(outputImageJfx);
-
-        redoStack.clear();
-
-        outputImageJfx = newImage;
-        toRun.run();
-        
-        outputImageView.setImage(outputImageJfx);
     }
 }

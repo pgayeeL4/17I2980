@@ -1,27 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package day10;
 
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javax.imageio.ImageIO;
 
-/**
- *
- * @author unouser
- */
+
 public class MyImage extends WritableImage{
 
     public MyImage(int i, int i0) {
@@ -119,7 +104,7 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void doNothing(int w) {
+    /*public void doNothing(int w) {
         
         float[][] doNothingKernel = new float[2*w + 1][2 * w + 1];
         
@@ -134,7 +119,7 @@ public class MyImage extends WritableImage{
         }
         
         this.applyKernel(doNothingKernel, w);
-    } 
+    } */
     
         
     
@@ -364,7 +349,7 @@ public class MyImage extends WritableImage{
         }
     }
     
-    public double colorDistance(Color one, Color two)
+    private double colorDistance(Color one, Color two)
     {
         return Math.abs(one.getRed() - two.getRed()) + Math.abs(one.getGreen() - two.getGreen()) + Math.abs(one.getBlue() - two.getBlue());
     }

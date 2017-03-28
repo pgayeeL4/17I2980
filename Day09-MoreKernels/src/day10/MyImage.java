@@ -1,26 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package day10;
 
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.embed.swing.SwingFXUtils;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javax.imageio.ImageIO;
 
-/**
- *
- * @author unouser
- */
+
 public class MyImage extends WritableImage{
 
     public MyImage(int i, int i0) {
@@ -35,16 +21,6 @@ public class MyImage extends WritableImage{
                 this.getPixelWriter().setColor(x, y,  inImage.getPixelReader().getColor(x, y));
             }
         }
-    }
-    
-    public void save(){
-        RenderedImage renderedImage = SwingFXUtils.fromFXImage(this, null);
-        try {
-            ImageIO.write(renderedImage, "PNG", new File(System.getProperty("user.home") + "/Desktop/newPhoto.png") );
-        } catch (IOException ex) {
-            Logger.getLogger(MyImage.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
     }
 
     private void applyKernel(float[][] kernel, int w)
@@ -128,7 +104,7 @@ public class MyImage extends WritableImage{
         
     }
     
-    public void doNothing(int w) {
+    /*public void doNothing(int w) {
         
         float[][] doNothingKernel = new float[2*w + 1][2 * w + 1];
         
@@ -143,28 +119,10 @@ public class MyImage extends WritableImage{
         }
         
         this.applyKernel(doNothingKernel, w);
-    } 
+    } */
     
         
-    public void magic(int w) {
-        
-        float[][] magicKernel = new float[2*w + 1][2 * w + 1];
-        
-        for(int y = 0; y < 2 * w + 1 ;  y++)
-        {
-            for(int x = 0; x < 2 * w+ 1 ; x++)
-            {
-                magicKernel[y][x] = 0;
-               
-            }
-        }
-        
-        magicKernel[0][0] = 1;
-        magicKernel[2*w][2*w] = 1;
-        
-        this.applyKernel(magicKernel, w);
-        
-    }
+    
     
     public void edgeDetector(int i) {
         
@@ -233,7 +191,121 @@ public class MyImage extends WritableImage{
         return toReturn;
     }
     
-    /*public void reduceColors(int finalColorCount)
+    public void reduceColors(int finalColorCount)
+    {
+        if(finalColorCount <= 0) return; //Doesn't make sense without a positive number
+        
+        List<Color> finalColors = new ArrayList<Color>();
+        
+        for(int i = 0; i < finalColorCount; i++)
+        {
+            double red = 0;
+            double green = 0;
+            double blue = 0;
+            
+            //Now assign values based on some heuristic
+            red = Math.random();
+            green = Math.random();
+            blue = Math.random();
+            
+            Color randomColor = new Color(red,green,blue,1);
+            finalColors.add(randomColor);
+        }
+        
+        
+        for(int pass = 0; pass < 8; pass++)
+        {
+            List<List<Color>> groupVotes = new ArrayList<List<Color>>();
+
+            for(int i = 0; i < finalColorCount; i++)
+            {
+                groupVotes.add(new ArrayList<Color>());
+            }
+
+            for(int y = 0; y < this.getHeight() ;  y++)
+            {
+                for(int x = 0; x < this.getWidth() ; x++)
+                {
+                    double closestDistance = Double.MAX_VALUE;
+                    int closestColorIndex = -1;
+                    Color thisColor = this.getPixelReader().getColor(x, y);
+
+                    for(int guess = 0; guess < finalColorCount; guess++)
+                    {
+                        Color possibleColor = finalColors.get(guess);
+                        double currentDistance = colorDistance(thisColor, possibleColor);
+
+                        if(currentDistance >= closestDistance) continue;
+
+                        closestColorIndex= guess;
+                        closestDistance = currentDistance;
+                    }
+
+                    groupVotes.get(closestColorIndex).add(thisColor);
+                }
+            }
+
+
+            ///Calculate the new median value
+
+            for(int i = 0; i < finalColorCount; i++)
+            {
+                double sumR = 0;
+                double sumG = 0;
+                double sumB = 0;
+                
+                if(groupVotes.get(i).size() == 0)
+                {
+                    sumR = Math.random();
+                    sumG = Math.random();
+                    sumB = Math.random();
+                }
+                else{
+                    for(Color color : groupVotes.get(i))
+                    {
+                        sumR += color.getRed();
+                        sumG += color.getGreen();
+                        sumB += color.getBlue();
+                    }
+
+                    sumR /= groupVotes.get(i).size();
+                    sumG /= groupVotes.get(i).size();
+                    sumB /= groupVotes.get(i).size();
+                }
+
+
+                finalColors.set(i, new Color(sumR, sumG, sumB, 1));
+               
+            }
+        }
+        
+        
+        
+        
+        for(int y = 0; y < this.getHeight() ;  y++)
+        {
+            for(int x = 0; x < this.getWidth() ; x++)
+            {
+                double closestDistance = Double.MAX_VALUE;
+                Color closestColor = null;
+                Color thisColor = this.getPixelReader().getColor(x, y);
+                
+                for(Color possibleColor : finalColors)
+                {
+                    double currentDistance = colorDistance(thisColor, possibleColor);
+                    
+                    if(currentDistance >= closestDistance) continue;
+                    
+                    closestColor = possibleColor;
+                    closestDistance = currentDistance;
+                }
+                
+                this.getPixelWriter().setColor(x, y, closestColor);
+            }
+        }
+    }
+    
+    public void reduceColorsRandom(int finalColorCount)
     {
         if(finalColorCount <= 0) return; //Doesn't make sense without a positive number
         
@@ -275,7 +347,12 @@ public class MyImage extends WritableImage{
                 this.getPixelWriter().setColor(x, y, closestColor);
             }
         }
-    }*/
+    }
+    
+    private double colorDistance(Color one, Color two)
+    {
+        return Math.abs(one.getRed() - two.getRed()) + Math.abs(one.getGreen() - two.getGreen()) + Math.abs(one.getBlue() - two.getBlue());
+    }
     
     
 }
